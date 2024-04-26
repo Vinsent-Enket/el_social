@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, request
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -52,3 +52,13 @@ class UpdateTelegramChatIdAPIView(APIView):
         user.save()
 
         return Response({'message': f'Чат {chat_id} в телеграмме успешно привязан'})
+
+
+
+class SubscriptionAPIView(APIView):
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        author = self.request.data.get('author')
+
+
+

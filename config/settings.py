@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'users'
+    'users',
+    'social',
+    'transactions',
 ]
 
 MIDDLEWARE = [
@@ -180,6 +182,8 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
 
 work = 'celery -A config worker -l INFO'
 

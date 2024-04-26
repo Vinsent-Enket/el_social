@@ -1,12 +1,10 @@
-from django.test import TestCase
-import unittest
-from unittest.mock import patch
-
 from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 
-from config import settings
-from datetime import datetime, timedelta
+import unittest
+from django.test import TestCase
+from django.contrib.auth.models import Group, Permission
+from django.core.management import call_command
 
 from users.models import User
 from rest_framework.test import APITestCase, force_authenticate, APIClient
@@ -61,3 +59,31 @@ class UserTestCase(APITestCase):
         response = self.client.delete(reverse_lazy('users:profile_delete', args=(self.user.id,)))
         # print(response.data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+class CommandTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        call_command('migrate', verbosity=0, interactive=False)
+
+    def test_create_moderator_group(self):
+        # Проверяем, что группа 'Moderator' не существует
+        self.assertFalse(Group.objects.filter(name='Moderator').exists())
+
+        # Вызываем команду
+        call_command('cmg')
+
+        # Проверяем, что группа 'Moderator' была создана
+        self.assertTrue(Group.objects.filter(name='Moderator').exists())
+
+        # Проверяем, что группе 'Moderator' были назначены соответствующие права
+        add_permissions = Permission.objects.filter(codename__startswith='add_')
+        change_permissions = Permission.objects.filter(codename__startswith='change_')
+        view_permissions = Permission.objects.filter(codename__startswith='view_')
+        permissions_count = add_permissions.count() + change_permissions.count() + view_permissions.count()
+        manager_group = Group.objects.get(name='Moderator')
+        self.assertEqual(manager_group.permissions.count(), permissions_count)

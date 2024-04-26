@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from users.models import User
+from users.models import User, Subscription
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -38,6 +38,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
+        fields = '__all__'
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subscription
         fields = '__all__'
 
 

@@ -20,4 +20,6 @@ urlpatterns = [
 
     path('chat_id/', UpdateTelegramChatIdAPIView.as_view(), name='chat_id'),
 
+
+
 ]
