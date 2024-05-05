@@ -1,0 +1,66 @@
+{% extends 'social/base.html' %}
+{% load static %}
+
+{% block content %}
+{% for content in content_list %}
+
+<div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">{{ content.name }}</h5>
+        <p class="card-text">{{ content.text }}</p>
+        <h6>{{ content.date }}</h6>
+        <a href="{% url 'social:content_detail' content.pk %}" class="btn btn-primary">К подробностям</a>
+        <hr>
+        <a class="btn btn-primary" href="{% url 'social:comment_create' %}" role="button">Написать комментарий</a>
+
+        <a class="btn btn-primary" data-bs-toggle="collapse" href="#{{ content.id }}" role="button"
+           aria-expanded="false"
+           aria-controls="{{ content.id }}">
+            Комменты
+        </a>
+        <a class="btn btn-primary" href="{% url 'users:profile'  content.author.id %}" role="button">Профиль автора</a>
+
+
+        <hr>
+    </div>
+</div>
+
+
+{% endfor %}
+{% endblock %}
+
+
+{% block text %}
+<div data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-smooth-scroll="true" class="scrollspy-example-2"
+     tabindex="0">
+
+
+    {% for content in content_list %}
+
+
+    <div class="collapse" id="{{ content.id }}">
+        {% for comment in comments_list %}
+        {% if content.id == comment.content.id %}
+        <div class="card">
+            <div class="card card-body">
+                <p class="card-text">
+                    {{comment.text}} -
+                    {{comment.author.name}}
+                </p>
+            </div>
+
+        </div>
+        {% endif %}
+        {% endfor %}
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#{{ content.id }}"
+                aria-expanded="false" aria-controls="{{ content.id }}">
+            Закрыть
+        </button>
+    </div>
+    {% endfor %}
+</div>
+
+
+<p> Тут будет чат комменты и тд </p>
+{% endblock %}

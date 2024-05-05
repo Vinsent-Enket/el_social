@@ -1,0 +1,24 @@
+{% extends 'social/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ user.name}}</h5>
+        <p class="card-text"> Баланс кошелька - {{ user.wallet }} </p>
+        <a href="{% url 'transactions:transaction_create' %}" class="btn btn-primary">Новая покупка</a>
+        {% for transact in transactions %}
+        <p class="card-text"> Покупка {{transact.price}}, {{ transact.date }}, status - {{ transact.executed }} </p>
+        {% if transact.executed == False %}
+        <p class="card-text"> Ссылка на оплату - {{ transact.url_for_payment }}</p>
+        <a href="{{ transact.url_for_payment }}" class="btn btn-primary">Оплатить}</a>
+
+        {% endif %}
+
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -8,6 +8,7 @@ class Transaction(models.Model):
     date = models.DateField(auto_now=True, verbose_name="Дата")
     executed = models.BooleanField(default=False, verbose_name="Выполнено")
     payer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Покупатель", related_name="payer")
+    url_for_payment = models.TextField(verbose_name="Ссылка для оплаты", blank=True, null=True)
 
     def __str__(self):
         return f'{self.subscription} - {self.user}'

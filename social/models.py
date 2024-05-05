@@ -14,6 +14,7 @@ class Content(models.Model):
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
     image = models.ImageField(upload_to="images/", verbose_name="Изображение", **NULLABLE)
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор", related_name="content_author")
+    level = models.IntegerField(verbose_name="Уровень подписки", default=0)  # TODO сделать их строго положительными
 
     # добавить поле для требуемого уровня подписки
     def get_like_count(self):
@@ -41,12 +42,13 @@ class Like(models.Model):
 
 
 class Comment(models.Model):
-    content = models.ForeignKey(Content, on_delete=models.CASCADE, verbose_name="Комментарий")
+    content = models.ForeignKey(Content, on_delete=models.CASCADE, verbose_name="Комментарий", related_name='comment_content')
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор", related_name='comment_author')
     text = models.TextField(verbose_name="Текст комментария")
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
     is_paid = models.BooleanField(default=False, verbose_name="Платный комментарий")
-    #cost = models.IntegerField(**NULLABLE, verbose_name="Стоимость") нужно сделать привязку к модели транзакция
+
+    # cost = models.IntegerField(**NULLABLE, verbose_name="Стоимость") нужно сделать привязку к модели транзакция
 
     def __str__(self):
         return f'Комментарий к {self.content}'

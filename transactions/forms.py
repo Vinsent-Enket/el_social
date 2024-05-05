@@ -1,0 +1,8 @@
+from django import forms
+from .models import Transaction
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        exclude = ['payer', 'url_for_payment']

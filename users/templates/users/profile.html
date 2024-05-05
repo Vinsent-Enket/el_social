@@ -1,0 +1,19 @@
+{% extends 'social/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">{{ user.name}}</h5>
+        <p class="card-text"> {{ user.description }}</p>
+        <p class="card-text"> Уровень как автора - {{ user.author_level }} </p>
+        <p class="card-text"> Баланс кошелька - {{ user.wallet }} </p>
+
+        <a href="{% url 'users:profile_update' user.pk %}" class="btn btn-primary">Редактировать</a>
+    </div>
+</div>
+
+{% endblock %}

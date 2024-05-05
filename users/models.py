@@ -35,7 +35,8 @@ class Subscription(models.Model):
         ('3', 'Pro')
     )
     level = models.CharField(max_length=1, choices=level, verbose_name='Уровень подписки')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='На кого подписан', related_name='subscribed_to')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='На кого подписан',
+                               related_name='subscribed_to')
     proprietor = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Подписчик', related_name='subscriber')
     price = models.IntegerField(default=0, verbose_name='Цена подписки')
 
