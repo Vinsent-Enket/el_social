@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from transactions.models import Transaction
-from users.forms import UserRegisterForm, UserProfileForm
+from users.forms import UserRegisterForm, UserProfileForm, SubscriptionForm
 from users.models import User, Subscription
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
@@ -47,7 +47,7 @@ class RegisterView(CreateView):
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'users/profile.html'
-    context_object_name = 'user'
+    context_object_name = 'author'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,6 +62,21 @@ class ProfileView(UpdateView):  # TODO выключить возможность
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+class SubscriptionsCreateView(LoginRequiredMixin, CreateView):
+    model = Subscription
+    form_class = SubscriptionForm
+    template_name = 'users/subscription_form.html'
+    success_url = reverse_lazy('social:main')
+
+
+
+
+
+"""
+--------------------------------------------------------------------------------------------------
+"""
 
 
 class UserCreateAPIView(generics.CreateAPIView):

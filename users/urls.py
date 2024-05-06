@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from users.apps import UsersConfig
 from users.views import UserCreateAPIView, UserRetrieveAPIView, UserUpdateAPIView, \
     MyTokenObtainPairView, UpdateTelegramChatIdAPIView, UserDestroyAPIView, UserCheckLevelAPIView, SubscriptionAPIView, \
-    RegisterView, ProfileView, ProfileDetailView
+    RegisterView, ProfileView, ProfileDetailView, SubscriptionsCreateView
 
 app_name = UsersConfig.name
 
@@ -21,15 +21,17 @@ urlpatterns = [
     path('profile/<int:pk>/', ProfileDetailView.as_view(), name='profile'),
     path('profile_update/<int:pk>/', ProfileView.as_view(), name='profile_update'),
 
+    path('subscribe/', SubscriptionsCreateView.as_view(), name='subscribe'),
+
     path('reg/', RegisterView.as_view(), name='reg'),
 
-    path('check_subs/', UserCheckLevelAPIView.as_view(), name='check_subs'),
-    path('subscribe/', SubscriptionAPIView.as_view(), name='subscribe'),
-
-    # новые урлы для пользователя
-    path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
-    path('chat_id/', UpdateTelegramChatIdAPIView.as_view(), name='chat_id'),
+    # path('check_subs/', UserCheckLevelAPIView.as_view(), name='check_subs'),
+    # path('subscribe/', SubscriptionAPIView.as_view(), name='subscribe'),
+    #
+    # # новые урлы для пользователя
+    # path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    #
+    # path('chat_id/', UpdateTelegramChatIdAPIView.as_view(), name='chat_id'),
 
 ]

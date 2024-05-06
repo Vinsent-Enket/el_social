@@ -19,7 +19,9 @@
            aria-controls="{{ content.id }}">
             Комменты
         </a>
+        {% if content.author.id != user.id %}
         <a class="btn btn-primary" href="{% url 'users:profile'  content.author.id %}" role="button">Профиль автора</a>
+        {% endif %}
 
 
         <hr>
@@ -45,7 +47,7 @@
         <div class="card">
             <div class="card card-body">
                 <p class="card-text">
-                    {{comment.text}} -
+                    {{comment.text}}
                     {{comment.author.name}}
                 </p>
             </div>
