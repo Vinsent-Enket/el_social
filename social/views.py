@@ -24,10 +24,17 @@ from users.permission import IsModerator
 # Create your views here.
 
 def index(request):
+    """"
+    пустая главная страница на которой будет логотип и приветственная инфа + конпки ведущие на регистрацию и тестовую ленту
+    """
     return render(request, 'social/index.html')
 
 
 class ContentListView(LoginRequiredMixin, ListView):
+    """
+    Лента выдающая контент авторов на которых подписан пользователь
+    TODO сделать фильтровку по уровню подписки/контента
+    """
     model = Content
     template_name = 'social/content_list.html'
     context_object_name = 'content_list'
@@ -49,6 +56,10 @@ class ContentListView(LoginRequiredMixin, ListView):
 
 
 class SmartContentListView(ContentListView):
+    """
+    Лента выдающая рекомендованных авторов и посты только 0 го уровня подписки
+    """
+
     def get_queryset(self):
         user = self.request.user
         subscribe = Subscription.objects.filter(proprietor=user).values_list('author', flat=True)
@@ -56,7 +67,11 @@ class SmartContentListView(ContentListView):
         return queryset
 
 
-class MyContentListView(LoginRequiredMixin, ListView): # TODO наследуйтесь от ContentListView
+class MyContentListView(LoginRequiredMixin, ListView):  # TODO наследуйтесь от ContentListView
+    """
+    Лента своих постов
+    """
+
     model = Content
     template_name = 'social/content_my_list.html'
     context_object_name = 'content_list'
@@ -67,12 +82,24 @@ class MyContentListView(LoginRequiredMixin, ListView): # TODO наследуйт
 
 
 class ContentCreateView(LoginRequiredMixin, CreateView):
+    """
+    Создание контента,
+    Нужно добавить проверку на уровень автора, чтобы он мог создавать посты не выше своего уровня
+    """
     model = Content
     form_class = ContentForm
     success_url = reverse_lazy('social:content_simple_list')  # TODO не забыть отключить поле владельца
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
 
 class ContentDetailView(LoginRequiredMixin, DetailView):
+    """
+    Детальный просмотр постов, тут же есть кнопка подписаться на автора,
+    TODO в идеале сделать так чтобы подписаться можно было без перехода на отдельную страницу
+    """
     model = Content
     context_object_name = 'content'
     template_name = 'social/content_detail.html'
@@ -106,7 +133,15 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('social:content_simple_list')  # TODO доделать CRUD
     template_name = 'social/comments/comment_form.html'
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
+
+
+"""
+----------------------------------------------------------------------------------------------------------
+"""
 class ContentViewSet(viewsets.ModelViewSet):
     # TODO отключить ли ;лист;? да отключить нахрен, а лучше разбить на отдельные классы APIList и APIDetail и тд
 
