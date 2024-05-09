@@ -56,9 +56,7 @@ class ContentListView(LoginRequiredMixin, ListView):
 
 
 class SmartContentListView(ContentListView):
-    """
-    Лента выдающая рекомендованных авторов и посты только 0 го уровня подписки
-    """
+
 
     def get_queryset(self):
         user = self.request.user
@@ -142,107 +140,106 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 """
 ----------------------------------------------------------------------------------------------------------
 """
-class ContentViewSet(viewsets.ModelViewSet):
-    # TODO отключить ли ;лист;? да отключить нахрен, а лучше разбить на отдельные классы APIList и APIDetail и тд
-
-    queryset = Content.objects.all()
-    serializer_class = ContentSerializer
-
-    def get_permissions(self):
-        if self.action == 'create':
-            self.permission_classes = [IsAuthenticated]
-        elif self.action == 'list':
-            self.renderer_classes = [TemplateHTMLRenderer]
-            self.template_name = 'social/content_list.html'
-            # self.serializer_class = SimpleContentSerializer
-            self.permission_classes = [AllowAny]
-        elif self.action == 'retrieve':
-            self.permission_classes = [IsAuthenticated]
-        elif self.action == 'update':
-            self.permission_classes = [IsAuthenticated, IsProprietor]
-        elif self.action == 'partial_update':
-            self.permission_classes = [IsAuthenticated, IsProprietor]
-        elif self.action == 'destroy':
-            self.permission_classes = [IsAuthenticated, IsProprietor]
-        return [permission() for permission in self.permission_classes]
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-    # def get(self):
-    #     return Response({"content_list": Content.objects.all()})
-
-    def get(self, request):
-
-        content_list = Content.objects.all()
-        context = {'content_list': content_list}
-        return Response(context)
-
-    def get_queryset(self):
-        queryset = Content.objects.all()
-        content_filter = self.request.query_params.get('selection')
-        print(content_filter)
-        if self.action == 'list':  # TODO сделать все три видов лент, наверное отдельными классами
-            if content_filter:
-                ids_str = ','.join([str(id) for id in content_filter])
-                # TODO сделать шаблоны для всех запросов в отдельном файле
-                # Создание queryset из записей, ID которых есть в списке
-                queryset = Content.objects.filter(
-                    author__id__in=ids_str.split(','))  # позволяет получить посты только с определенными авторами
-                # queryset = queryset.filter(Q(pk__in=ids_str.split(',')))  # NOTE разобраться позже
-            # else:
-            #     queryset = queryset.filter(level__lte=self.request.user.level)
-
-        return queryset
-
-
-class LakeAPIView(APIView):
-    def post(self, *args, **kwargs):
-        content_id = self.request.data.get('content_id')
-        user = self.request.user
-        try:
-            content = Content.objects.get(id=content_id)
-        except Content.DoesNotExist:
-            message = f'Такого поста не существует'
-            code = HTTP_404_NOT_FOUND
-        else:
-            if Like.objects.filter(author=user, content=content).exists():
-                Like.objects.filter(author=user, content=content).delete()
-                message = 'Удалено'
-                code = HTTP_204_NO_CONTENT
-            else:
-                Like.objects.create(author=user, content=content).save()
-                message = 'Добавлено'
-                code = HTTP_201_CREATED
-
-        return Response({'message': message}, status=code)
-
-
-class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentsSerializer
-
-    def get_queryset(self):
-        queryset = Comment.objects.all()
-        content_filter = self.request.query_params.get('content_filter')
-        if content_filter:
-            queryset = queryset.filter(content_id=content_filter)
-        return queryset
-
-    def get_permissions(self):
-        if self.action == 'create':
-            self.permission_classes = [IsAuthenticated]
-        elif self.action == 'list':
-            self.permission_classes = [IsAuthenticated]
-        elif self.action == 'retrieve':
-            self.permission_classes = [IsAuthenticated]
-        elif self.action == 'update':
-            self.permission_classes = [IsAuthenticated, IsProprietor]
-        elif self.action == 'partial_update':
-            self.permission_classes = [IsAuthenticated, IsProprietor]
-        elif self.action == 'destroy':
-            self.permission_classes = [IsAuthenticated, IsProprietor]
-        return [permission() for permission in self.permission_classes]
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+# class ContentViewSet(viewsets.ModelViewSet):
+#
+#     queryset = Content.objects.all()
+#     serializer_class = ContentSerializer
+#
+#     def get_permissions(self):
+#         if self.action == 'create':
+#             self.permission_classes = [IsAuthenticated]
+#         elif self.action == 'list':
+#             self.renderer_classes = [TemplateHTMLRenderer]
+#             self.template_name = 'social/content_list.html'
+#             # self.serializer_class = SimpleContentSerializer
+#             self.permission_classes = [AllowAny]
+#         elif self.action == 'retrieve':
+#             self.permission_classes = [IsAuthenticated]
+#         elif self.action == 'update':
+#             self.permission_classes = [IsAuthenticated, IsProprietor]
+#         elif self.action == 'partial_update':
+#             self.permission_classes = [IsAuthenticated, IsProprietor]
+#         elif self.action == 'destroy':
+#             self.permission_classes = [IsAuthenticated, IsProprietor]
+#         return [permission() for permission in self.permission_classes]
+#
+#     def perform_create(self, serializer):
+#         serializer.save(author=self.request.user)
+#
+#     # def get(self):
+#     #     return Response({"content_list": Content.objects.all()})
+#
+#     def get(self, request):
+#
+#         content_list = Content.objects.all()
+#         context = {'content_list': content_list}
+#         return Response(context)
+#
+#     def get_queryset(self):
+#         queryset = Content.objects.all()
+#         content_filter = self.request.query_params.get('selection')
+#         print(content_filter)
+#         if self.action == 'list':
+#             if content_filter:
+#                 ids_str = ','.join([str(id) for id in content_filter])
+#
+#                 # Создание queryset из записей, ID которых есть в списке
+#                 queryset = Content.objects.filter(
+#                     author__id__in=ids_str.split(','))  # позволяет получить посты только с определенными авторами
+#                 # queryset = queryset.filter(Q(pk__in=ids_str.split(',')))  # NOTE разобраться позже
+#             # else:
+#             #     queryset = queryset.filter(level__lte=self.request.user.level)
+#
+#         return queryset
+#
+#
+# class LakeAPIView(APIView):
+#     def post(self, *args, **kwargs):
+#         content_id = self.request.data.get('content_id')
+#         user = self.request.user
+#         try:
+#             content = Content.objects.get(id=content_id)
+#         except Content.DoesNotExist:
+#             message = f'Такого поста не существует'
+#             code = HTTP_404_NOT_FOUND
+#         else:
+#             if Like.objects.filter(author=user, content=content).exists():
+#                 Like.objects.filter(author=user, content=content).delete()
+#                 message = 'Удалено'
+#                 code = HTTP_204_NO_CONTENT
+#             else:
+#                 Like.objects.create(author=user, content=content).save()
+#                 message = 'Добавлено'
+#                 code = HTTP_201_CREATED
+#
+#         return Response({'message': message}, status=code)
+#
+#
+# class CommentViewSet(viewsets.ModelViewSet):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentsSerializer
+#
+#     def get_queryset(self):
+#         queryset = Comment.objects.all()
+#         content_filter = self.request.query_params.get('content_filter')
+#         if content_filter:
+#             queryset = queryset.filter(content_id=content_filter)
+#         return queryset
+#
+#     def get_permissions(self):
+#         if self.action == 'create':
+#             self.permission_classes = [IsAuthenticated]
+#         elif self.action == 'list':
+#             self.permission_classes = [IsAuthenticated]
+#         elif self.action == 'retrieve':
+#             self.permission_classes = [IsAuthenticated]
+#         elif self.action == 'update':
+#             self.permission_classes = [IsAuthenticated, IsProprietor]
+#         elif self.action == 'partial_update':
+#             self.permission_classes = [IsAuthenticated, IsProprietor]
+#         elif self.action == 'destroy':
+#             self.permission_classes = [IsAuthenticated, IsProprietor]
+#         return [permission() for permission in self.permission_classes]
+#
+#     def perform_create(self, serializer):
+#         serializer.save(author=self.request.user)

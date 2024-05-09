@@ -1,7 +1,7 @@
 from django.urls import path, reverse
 
 from transactions.apps import TransactionsConfig
-from transactions.views import TransactionListAPIView, TransactionAPIView, TransactionsListView, TransactionsCreateView
+from transactions.views import TransactionsListView, TransactionsCreateView
 
 app_name = TransactionsConfig.name
 

@@ -11,7 +11,7 @@ class Transaction(models.Model):
     url_for_payment = models.TextField(verbose_name="Ссылка для оплаты", blank=True, null=True)
 
     def __str__(self):
-        return f'{self.subscription} - {self.user}'
+        return f'{self.payer}: {self.date} - {self.price}'
 
     class Meta:
         verbose_name = 'Транзакция'

@@ -7,7 +7,7 @@ from social.models import Content
 from users.models import User
 
 
-# Create your tests here.
+# Create your api_tests here.
 class ContentTestCase(APITestCase):
     def setUp(self) -> None:
         self.user_data = {

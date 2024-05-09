@@ -13,7 +13,7 @@ from users.permission import IsTrueUser
 from users.views import UserRetrieveAPIView
 
 
-# Create your tests here.
+# Create your api_tests here.
 
 
 class UserTestCase(APITestCase):

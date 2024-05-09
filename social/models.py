@@ -12,9 +12,9 @@ class Content(models.Model):
     name = models.CharField(max_length=120, verbose_name="Название поста")
     text = models.TextField(verbose_name="Текст поста", **NULLABLE)
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
-    image = models.ImageField(upload_to="images/", verbose_name="Изображение", **NULLABLE)
+    image = models.ImageField(upload_to="social/", verbose_name="Изображение", **NULLABLE)
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор", related_name="content_author")
-    level = models.IntegerField(verbose_name="Уровень подписки", default=0)  # TODO сделать их строго положительными
+    subscribers_only = models.BooleanField(default=False, verbose_name="Только для подписчиков")
 
     # добавить поле для требуемого уровня подписки
     def get_like_count(self):
@@ -23,7 +23,7 @@ class Content(models.Model):
     like_count = property(get_like_count)
 
     def get_comment_count(self):
-        return self.comment_set.count()
+        return self.comment_content.count()
 
     comment_count = property(get_comment_count)
 
@@ -42,7 +42,8 @@ class Like(models.Model):
 
 
 class Comment(models.Model):
-    content = models.ForeignKey(Content, on_delete=models.CASCADE, verbose_name="Комментарий", related_name='comment_content')
+    content = models.ForeignKey(Content, on_delete=models.CASCADE, verbose_name="Комментарий",
+                                related_name='comment_content')
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор", related_name='comment_author')
     text = models.TextField(verbose_name="Текст комментария")
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")

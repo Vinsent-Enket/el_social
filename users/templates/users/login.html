@@ -3,6 +3,15 @@
 
 
 {% block content %}
+{% if user.is_authenticated%}
+<div class="col">
+    <div class="card">
+        <div class="card-text">
+            Вы уже аутентифицированы как {{user.name}}
+        </div>
+    </div>
+</div>
+{% else %}
 <div class="col">
     <div class="card">
         <div class="card-body-fluid">
@@ -15,4 +24,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}

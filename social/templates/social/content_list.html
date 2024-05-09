@@ -1,11 +1,13 @@
 {% extends 'social/base.html' %}
 {% load static %}
+{% load my_filters %}
+
 
 {% block content %}
 {% for content in content_list %}
 
 <div class="card">
-    <img src="..." class="card-img-top" alt="...">
+    <img src="{{ content.images|mymedia }}" class="card-img-top" alt="...">
     <div class="card-body">
         <h5 class="card-title">{{ content.name }}</h5>
         <p class="card-text">{{ content.text }}</p>

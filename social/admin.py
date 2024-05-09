@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
 
-from social.models import Content, Comment
+from social.models import Content, Comment, Like
 
 
 # Register your models here.
@@ -9,6 +9,9 @@ from social.models import Content, Comment
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('author', 'content', 'date')
+
+
+admin.site.register(Like)
 
 
 @admin.register(Content)

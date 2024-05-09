@@ -1,13 +1,47 @@
 {% extends 'social/base.html' %}
 {% load static %}
+{% load my_filters %}
+{% load crispy_forms_tags %}
 
 
 {% block content %}
+{% for content in content_list %}
 
 <div class="card">
-    <img src="..." class="card-img-top" alt="...">
+    <img src="{{ content.images|mymedia }}" class="card-img-top" alt="...">
     <div class="card-body">
-        <h5 class="card-title">{{ author.name}}</h5>
+        <h5 class="card-title">{{ content.name }}</h5>
+        <p class="card-text">{{ content.text }}</p>
+        <h6>{{ content.date }}</h6>
+        <a href="{% url 'social:content_detail' content.pk %}" class="btn btn-primary">К подробностям</a>
+        <hr>
+        <a class="btn btn-primary" href="{% url 'social:comment_create' %}" role="button">Написать комментарий</a>
+
+        <a class="btn btn-primary" data-bs-toggle="collapse" href="#{{ content.id }}" role="button"
+           aria-expanded="false"
+           aria-controls="{{ content.id }}">
+            Комменты
+        </a>
+        {% if content.author.id != user.id %}
+        <a class="btn btn-primary" href="{% url 'users:profile'  content.author.id %}" role="button">Профиль автора</a>
+        {% endif %}
+
+
+        <hr>
+    </div>
+</div>
+
+
+{% endfor %}
+{% endblock %}
+
+
+{% block text %}
+
+<div class="card">
+    <img src="..." class="card-img-top w-auto p-3" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">{{ author.first_name}}</h5>
         <p class="card-text"> {{ author.description }}</p>
 
         {% if author.id == user.id %}
@@ -19,6 +53,15 @@
         <a class="btn btn-primary" href="{% url 'users:subscribe' %}" role="button">Подписаться</a>
         {% endif %}
     </div>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <button type="submit">Сохранить изменения</button>
+    </form>
 </div>
 
 {% endblock %}
